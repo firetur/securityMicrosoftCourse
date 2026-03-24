@@ -1,5 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using securityMicrosoftCourse.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Register AppDbContext with an in-memory database
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseInMemoryDatabase("SafeVaultDB"));
+    
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
