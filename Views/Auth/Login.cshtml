@@ -2,12 +2,27 @@
     ViewData["Title"] = "Login Page";
 }
 
-<form asp-action="Submit" method="post">
+<h2>Login</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+@if (TempData["Message"] != null)
+{
+    <div style="color:green">@TempData["Message"]</div>
+}
+
+<form asp-action="Login" method="post">
     <label for="username">Username:</label>
     <input type="text" id="username" name="username">
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
 
     <button type="submit">Submit</button>
 </form>
+
+<div style="margin-top:10px;">
+    <a asp-controller="Auth" asp-action="Register" class="btn btn-secondary">Register</a>
+</div>

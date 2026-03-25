@@ -1,7 +1,26 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using securityMicrosoftCourse.Data;
+using securityMicrosoftCourse.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
+});
 
 // Register AppDbContext with an in-memory database
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -22,6 +41,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

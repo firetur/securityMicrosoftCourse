@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using securityMicrosoftCourse.Data;
 using securityMicrosoftCourse.Helpers;
-using securityMicrosoftCourse.Models;
 using securityMicrosoftCourse.Services;
 
 namespace Tests;
@@ -24,11 +24,11 @@ public class TestInputValidation {
         _authService = new AuthService(_context);
 
         // Seed a valid user
-        _context.Users.Add(new User
+        _context.Users.Add(new IdentityUser
         {
-            Username = "alice",
+            UserName = "alice",
             Email = "alice@example.com",
-            Password = PasswordHasher.HashPassword(ValidPassword)
+            PasswordHash = PasswordHashHelper.HashPassword(ValidPassword)
         });
         _context.SaveChanges();
     }
@@ -40,34 +40,34 @@ public class TestInputValidation {
     }
 
     [Test]
-    public void Login_WithValidCredentials_ShouldPass()
+    public async Task Login_WithValidCredentials_ShouldPass()
     {
-        Assert.That(_authService.LoginUser("alice", ValidPassword), Is.True);
+        Assert.That(await _authService.LoginUser("alice", ValidPassword), Is.True);
     }
 
     [Test]
-    public void Login_WithWrongUsername_ShouldFail()
+    public async Task Login_WithWrongUsername_ShouldFail()
     {
-        Assert.That(_authService.LoginUser("bob", ValidPassword), Is.False);
+        Assert.That(await _authService.LoginUser("bob", ValidPassword), Is.False);
     }
 
     [Test]
-    public void Login_WithWrongPassword_ShouldFail()
+    public async Task Login_WithWrongPassword_ShouldFail()
     {
-        Assert.That(_authService.LoginUser("alice", "wrongpassword!"), Is.False);
+        Assert.That(await _authService.LoginUser("alice", "wrongpassword!"), Is.False);
     }
 
     [Test]
-    public void Login_WithSQLInjection_ShouldFail()
+    public async Task Login_WithSQLInjection_ShouldFail()
     {
         string maliciousUsername = "alice'; DROP TABLE Users; --";
-        Assert.That(_authService.LoginUser(maliciousUsername, ValidPassword), Is.False);
+        Assert.That(await _authService.LoginUser(maliciousUsername, ValidPassword), Is.False);
     }
 
     [Test]
-    public void Login_WithXSSAttempt_ShouldFail()
+    public async Task Login_WithXSSAttempt_ShouldFail()
     {
         string maliciousUsername = "<script>alert('XSS');</script>";
-        Assert.That(_authService.LoginUser(maliciousUsername, ValidPassword), Is.False);
+        Assert.That(await _authService.LoginUser(maliciousUsername, ValidPassword), Is.False);
     }
 }

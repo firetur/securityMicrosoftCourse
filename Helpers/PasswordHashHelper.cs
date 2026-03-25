@@ -1,20 +1,10 @@
-using System.Security.Cryptography;
-using System.Text;
-
 namespace securityMicrosoftCourse.Helpers;
 
-public static class PasswordHasher
+public static class PasswordHashHelper
 {
     public static string HashPassword(string password)
-    {
-        using var sha256 = SHA256.Create();
-        var bytes = Encoding.UTF8.GetBytes(password);
-        var hash = sha256.ComputeHash(bytes);
-        return Convert.ToBase64String(hash);
-    }
+        => BCrypt.Net.BCrypt.HashPassword(password);
 
     public static bool VerifyPassword(string password, string hash)
-    {
-        return HashPassword(password) == hash;
-    }
+        => BCrypt.Net.BCrypt.Verify(password, hash);
 }
