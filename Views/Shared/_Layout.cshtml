@@ -37,7 +37,7 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item d-flex align-items-center me-2">
-                                <span class="nav-link text-dark">@User.Identity.Name</span>
+                                <span class="nav-link text-dark">@Html.Encode(User.Identity.Name)</span>
                             </li>
                             <li class="nav-item">
                                 <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">

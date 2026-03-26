@@ -45,7 +45,8 @@ public class AuthController : Controller
 
         if (!success)
         {
-            ViewBag.Error = "Registration failed. Username may already exist.";
+            // Generic error message to prevent account enumeration attacks
+            ViewBag.Error = "Registration failed. Please check your input and try again.";
             return View();
         }
 

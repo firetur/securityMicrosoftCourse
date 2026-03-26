@@ -6,11 +6,11 @@
 
 @if (ViewBag.Error != null)
 {
-    <div style="color:red">@ViewBag.Error</div>
+    <div style="color:red">@Html.Raw(System.Net.WebUtility.HtmlEncode(ViewBag.Error?.ToString()))</div>
 }
 @if (TempData["Message"] != null)
 {
-    <div style="color:green">@TempData["Message"]</div>
+    <div style="color:green">@Html.Raw(System.Net.WebUtility.HtmlEncode(TempData["Message"]?.ToString()))</div>
 }
 
 <form asp-action="Login" method="post">

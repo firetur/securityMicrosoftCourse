@@ -6,7 +6,7 @@
 
 @if (ViewBag.Error != null)
 {
-    <div style="color:red">@ViewBag.Error</div>
+    <div style="color:red">@Html.Raw(System.Net.WebUtility.HtmlEncode(ViewBag.Error?.ToString()))</div>
 }
 
 <form asp-action="Register" method="post">

@@ -30,6 +30,12 @@ public class AuthService
             return false;
         }
 
+        // Validate email format
+        if (!ValidationHelper.IsValidEmail(email))
+        {
+            return false;
+        }
+
         if (FindUserByUsername(username) is not null)
             return false;
 

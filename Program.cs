@@ -12,6 +12,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
+    // Security improvements
+    options.Password.RequiredLength = 8;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
@@ -41,6 +46,28 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+// Add security headers middleware
+app.Use(async (context, next) =>
+{
+    // Content Security Policy - helps prevent XSS attacks
+    context.Response.Headers["Content-Security-Policy"] = 
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';";
+    
+    // Prevent clickjacking attacks
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    
+    // Prevent MIME-sniffing attacks
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    
+    // Enable XSS protection in older browsers
+    context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+    
+    // Referrer policy for privacy
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    
+    await next();
+});
 
 app.UseAuthentication();
 
